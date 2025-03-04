@@ -1,0 +1,99 @@
+/* --- Reset some default spacing --- */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+  
+  body {
+    font-family: sans-serif;
+    padding: 20px;
+  }
+  
+  /* --- Buildings Grid --- */
+  .buildings-grid {
+    display: grid;
+    grid-template-columns: repeat(8, 100px); /* 8 columns for each building card */
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .building-card {
+    border: 1px solid #333;
+    display: flex;
+    flex-direction: column;
+  }
+  .building-card h3 {
+    text-align: center;
+    height: 200px;
+    border-radius: 16px;
+    background-color: #f4f4f4;
+    padding: 5px;
+    border-bottom: 1px solid #333;
+    font-size: 14px;
+  }
+  /* Content rows inside each building card */
+  .card-content {
+    flex: 1;
+    border-bottom: 1px solid #333;
+  }
+  /* Remove bottom border on the last row if you like */
+  .card-content:last-child {
+    border-bottom: none;
+  }
+  
+  /* --- Board Grid (3x3) --- */
+  .board-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 60px);
+    grid-template-rows: repeat(4, 60px);
+    gap: 5px;
+    margin-bottom: 20px;
+  }
+  .cell {
+    border: 1px solid #333;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  /* Example of a "brown" square resource on the board */
+  .brown-square {
+    width: 80%;
+    height: 80%;
+    background-color: sienna;
+  }
+  /* Example of a house in bottom-left. You could replace with an actual image. */
+  .house {
+    background-color: lightblue;
+    width: 80%;
+    height: 80%;
+  }
+  
+  /* --- Resource Cards (Wood, Brick) --- */
+  .resource-cards {
+    display: flex;
+    gap: 20px;
+  }
+  .resource-card {
+    width: 80px;
+    height: 120px;
+    border: 1px solid #333;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  .resource-card h4 {
+    margin-bottom: 10px;
+    font-size: 14px;
+  }
+  /* Colored squares for the resources */
+  .wood-square {
+    width: 40px;
+    height: 40px;
+    background-color: sienna;
+  }
+  .brick-square {
+    width: 40px;
+    height: 40px;
+    background-color: firebrick;
+  }

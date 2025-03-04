@@ -1,0 +1,221 @@
+body {
+    margin: 30px;
+    font-family: 'Times New Roman', Times, serif;
+    background-image: url('Images/Dark-Wood-Background.jpg');
+    background-size: cover; 
+    background-repeat: no-repeat;
+    min-height: 100vh;
+  }
+  
+  .red    { background-color: #ff3b3b; }
+  .brown  { background-color: #8b4513; }
+  .blue   { background-color: #0DD1F3; }
+  .yellow { background-color: #ffc800; }
+  .white  { background-color: #f9f9f9; }
+  .transparent  { background-color: transparent; }
+  .gray   { background-color: #E9E3E3; }
+  
+  .page-layout {
+    display: flex;
+    flex-direction: column; 
+    gap: 70px; 
+  }
+  
+ 
+  .card-container {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap; 
+    margin-bottom: 30px;
+    height: auto;
+    align-items: flex-start;
+  }
+  .card {
+    height: 255px;
+    width: 148px;
+    border: 3px solid #000000;
+    border-radius: 10px;
+    overflow: hidden;
+    background-color: white;
+  }
+
+  .card-header {
+    text-align: left;
+    font-weight: bold;
+    padding: 5px 0 3px 8px;
+    border-bottom: 3px solid #000;
+    background: #f9f9f9;
+  }
+  .card-body {
+    padding: 0px;
+    text-align: center;
+    background-color: white;
+  }
+  
+/*-------------- individual grid padding for each box -----------------*/
+
+  .image-pattern-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 20px);
+    grid-auto-rows: 20px;
+    justify-content: center;
+    margin: 0 auto;
+    gap: 2px;
+  }
+
+/* -----------------END of Grid padding------------------ */
+
+  .triple-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 20px);
+    grid-template-rows: repeat(2, 20px);
+    justify-content: center;
+    margin: 0 auto;
+    gap: 2px;
+  }
+  .quad-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 20px);
+    grid-auto-rows: repeat(4, 20px);
+    justify-content: center;
+    margin: 0 auto;
+    gap: 2px;
+  }
+  .small-grid {
+    grid-template-columns: repeat(2, 20px);
+    grid-auto-rows: 20px;
+  }
+
+  .five-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 20px);
+    grid-auto-rows: 20px;
+    justify-content: center;
+    margin: 0 auto;
+    gap: 2px;
+  }
+  
+  .board-and-resources {
+    display: flex;
+    gap: 90px;
+  }
+  .board {
+    height: 100%;
+    display: grid;
+    grid-template-columns: repeat(4, 80px);
+    grid-template-rows: repeat(4, 80px);
+    gap: 7px;
+    border: 2px;
+    border-radius: 10px;
+    padding: 8px;
+    background-color: rgb(172, 231, 33);
+  }
+  .cell {
+    width: 80px;
+    height: 80px;
+    background-color: rgba(152, 214, 45, 0.575);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: inset 0 0 4px #000000;
+    padding: 1px;
+  }
+  
+  
+  .resources {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+  }
+  .resource-card {
+    height: 255px;
+    width: 148px;
+    border: 3px solid #000000;
+    border-radius: 4px;
+    overflow: hidden;
+    text-align: center;
+    background-color: white;
+    border-radius: 10px;
+  }
+  .resource-card-header {
+    font-weight: bold;
+    padding: 5px 0;
+    border-bottom: 3px solid #000000;
+    background: #f9f9f9;
+  }
+  .resource-card-body {
+    padding: 10px;
+  }
+  .stack-card {
+    height: 255px;
+    width: 148px;
+    border: 3px solid #000000;
+    border-radius: 4px;
+    overflow: hidden;
+    text-align: center;
+    background-color: white;
+    border-radius: 10px;
+  }
+  .stack-card-body {
+    font-weight: bold;
+    padding: 50% 0;
+    background-color: white;
+  }
+  
+/*---------------------  Pictures Below  ------------------------*/
+  .cottage-image {
+    width: 100%;
+    height: auto;
+    padding-top: 10px;
+    padding-bottom: 17px;
+  }
+  .farm-image {
+    width: 100%;
+    height: auto;
+    padding-bottom: 14px;
+  }
+  .chapel-image {
+    width: 100%;
+    height: auto;
+    padding-bottom: 14px;
+  }
+  .tavern-image {
+    width: 100%;
+    height: auto;
+    padding-bottom: 18px;
+    padding-top: 7px;
+  }
+  .well-image {
+    width: 100%;
+    height: auto;
+    padding-bottom: 18px;
+    padding-top: 10px;
+  }
+  .theater-image {
+    width: 100%;
+    height: auto;
+    padding-bottom: 8px;
+    padding-top: 6px;
+  }
+  .factory-image {
+    width: 100%;
+    height: auto;
+    padding-bottom: 11px;
+    padding-top: 5px;
+  }
+
+  .wood-image {
+    width: 100%;
+    height: auto;
+    padding-top: 30px;
+  }
+  .brick-image {
+    width: 100%;
+    height: auto;
+    padding-top: 30px;
+  }
+  .glass-image {
+    width: 100%;
+    height: auto;
+    padding-top: 30px;
+  }

@@ -1,0 +1,347 @@
+body {
+    margin: 25px;
+    font-family: 'Times New Roman', Times, serif; 
+    /*background-color: #004e5c;*/
+    background-color: #B2A997;
+    background-image: url("https://www.transparenttextures.com/patterns/wood-pattern.png");
+}
+  
+  
+  .square {
+    width: 20px;
+    height: 20px;
+    display: inline-block;
+    margin: 2px;
+  }
+  .square.selected {
+    outline: 3px solid #000000; /* Bright outline for selected squares */
+  }
+
+  .red    { background-color: #ff3b3b; }
+  .brown  { background-color: #8b4513; }
+  .blue   { background-color: #0DD1F3; }
+  .yellow { background-color: #ffc800; }
+  .white  { background-color: #f9f9f9; }
+  .transparent  { background-color: transparent; }
+  .gray   { background-color: #B2A997; }
+  
+  .page-layout {
+    display: flex;
+    flex-direction: column; 
+    flex-wrap: wrap;
+    gap: 120px; 
+  }
+  
+  
+  .card-container {
+    display: flex;
+    gap: 5px;
+    flex-wrap: wrap; 
+    margin-bottom: 80px;
+    height: 200px;
+  }
+  .card {
+    min-height: 300px;
+    width: 190px;
+    border: 1px solid #000000;
+    border-radius: 10px;
+    overflow: hidden;
+    background-color: #f8f8f8;
+  }
+  .card-header {
+    text-align: left;
+    text-indent: 15px;
+    font-weight: bold;
+    padding: 5px 0;
+    border-bottom: 1px solid #000;
+    background: #ffffff;
+  }
+  .card-body {
+    padding: 8px;
+    text-align: center;
+    
+  }
+  .card-bottom {
+    border-bottom: 1px solid #000;
+  }
+  .card-score {
+    text-align: center;
+    font-size: small;
+    padding: 5px 0;
+  }
+  .card.selected {
+    outline: 6px solid #0dcf6b; 
+  }
+
+  
+  .image-pattern-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 20px);
+    grid-auto-rows: 20px;
+    justify-content: center;
+    margin: 0 auto;
+    gap: 2px;
+  }
+
+  .pattern-grid {
+    padding: 50% 0;
+    display: grid;
+    grid-template-columns: repeat(3, 20px);
+    grid-auto-rows: 20px;
+    justify-content: center;
+    margin: 0 auto;
+    gap: 2px;
+  }
+  .triple-grid {
+    padding: 50%;
+    display: grid;
+    grid-template-columns: repeat(3, 20px);
+    grid-template-rows: repeat(2, 20px);
+    justify-content: center;
+    margin: 0 auto;
+    gap: 2px;
+  }
+  .quad-grid {
+    
+    display: grid;
+    grid-template-columns: repeat(4, 20px);
+    grid-auto-rows: repeat(4, 20px);
+    justify-content: center;
+    margin: 0 auto;
+    gap: 2px;
+  }
+  .small-grid {
+    grid-template-columns: repeat(2, 20px);
+    grid-auto-rows: 20px;
+  }
+  .five-grid {
+    padding: 50%;
+    display: grid;
+    grid-template-columns: repeat(5, 20px);
+    grid-auto-rows: 20px;
+    justify-content: center;
+    margin: 0 auto;
+    gap: 2px;
+
+  }
+  
+/*---------------------  Icons Below  ------------------------*/
+  .cottage-icon {
+    width: auto;   
+    height: auto;            
+    margin-left: 80px;          
+  }
+  .farm-icon {
+    width: auto;   
+    height: auto;            
+    margin-left: 100px; 
+  }
+  .chapel-icon {
+    width: auto;   
+    height: auto;            
+    margin-left: 80px; 
+  }
+  .tavern-icon {
+    width: auto;   
+    height: auto;            
+    margin-left: 80px; 
+  }
+  .well-icon {
+    width: auto;   
+    height: auto;            
+    margin-left: 100px; 
+  }
+  .theater-icon {
+    width: auto;   
+    height: auto;            
+    margin-left: 80px; 
+  }
+  .factory-icon {
+    width: auto;   
+    height: auto;            
+    margin-left: 80px; 
+  }
+
+  .score-icon {
+    width: 16px;               
+    height: 13px;
+  }
+  .cottage-bottom-icon {
+    width: 16px;               
+    height: 13px;
+  }
+  .factory-bottom-icon {
+    width: 16px;               
+    height: 13px;
+  }
+  .tavern-bottom-icon {
+    width: 16px;               
+    height: 13px;
+  }
+
+  .cottage-grid-icon {
+    width: 45%;      /* Full size within cell */
+    height: 45%;     /* Full size within cell */
+    object-fit: contain;  /* Maintain aspect ratio */
+    position: absolute;   /* If you want it positioned inside the cell */
+    top: 50%;              /* Move to middle vertically */
+    left: 50%;             /* Move to middle horizontally */
+    transform: translate(-50%, -50%);  /* Center exactly at middle */
+  }
+  .farm-grid-icon {
+    width: 45%;      /* Full size within cell */
+    height: 45%;     /* Full size within cell */
+    object-fit: contain;  /* Maintain aspect ratio */
+    position: absolute;   /* If you want it positioned inside the cell */
+    top: 50%;              /* Move to middle vertically */
+    left: 50%;             /* Move to middle horizontally */
+    transform: translate(-50%, -50%);  /* Center exactly at middle */
+  }
+
+/*---------------------  Pictures Below  ------------------------*/  
+  .cottage-image {
+    width: 100%;
+    height: auto;
+    padding-top: 10px;
+    padding-bottom: 17px;
+    background-color: transparent;
+  }
+  .farm-image {
+    width: 100%;
+    height: auto;
+    padding-top: 10px;
+    padding-bottom: 17px;
+    background-color: transparent;
+  }
+  .chapel-image {
+    width: 100%;
+    height: auto;
+    padding-top: 10px;
+    padding-bottom: 17px;
+    background-color: transparent;
+  }
+  .tavern-image {
+    width: 100%;
+    height: auto;
+    padding-top: 10px;
+    padding-bottom: 17px;
+    background-color: transparent;
+  }
+  .well-image {
+    width: 100%;
+    height: auto;
+    padding-top: 10px;
+    padding-bottom: 17px;
+    background-color: transparent;
+  }
+  .theater-image {
+    width: 100%;
+    height: auto;
+    padding-top: 10px;
+    padding-bottom: 17px;
+    background-color: transparent;
+  }
+  .factory-image {
+    width: 100%;
+    height: auto;
+    padding-top: 10px;
+    padding-bottom: 17px;
+    background-color: transparent;
+  }
+
+  .card-scorex {
+    display: flex;             
+    align-items: center;      
+    font-size: 14px;           
+    gap: 5px;                 
+}
+
+  
+
+  
+  .board-and-resources {
+    display: flex;
+    gap: 90px;
+  }
+  .board {
+    height: 325px;
+    display: grid;
+    grid-template-columns: repeat(4, 80px);
+    grid-template-rows: repeat(4, 80px);
+    gap: 2px;
+    border: 2px solid #000000;
+    border-radius: 10px;
+    padding: 4px;
+  }
+  .cell {
+    width: 80px;
+    height: 80px;
+    background-color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: inset 0 0 2px #000000;
+    position: relative;
+  }
+  .cell.selectable:hover {
+    background-color: #a4bcd2; 
+  }
+
+  .selectable {
+    transition: background-color 0.2s ease;
+    cursor: pointer;
+  }
+  .selectable:hover {
+    background-color: #cef5e1;
+  }
+  .resource-card.selected {
+    background-color: #6fd9f0 !important;
+  }
+  .cell.selected {
+      background-color: #6fd9f0 !important;
+  }
+
+  .deck-selectable:hover {
+    background-color: #91bedc;
+    cursor: pointer;
+  }
+
+  
+  
+  .resources {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+  }
+  .resource-card {
+    min-height: 300px;
+    width: 180px;
+    border: 1px solid #000000;
+    border-radius: 4px;
+    overflow: hidden;
+    text-align: center;
+    background-color: white
+  }
+  .resource-card-header {
+    font-weight: bold;
+    padding: 5px 0;
+    border-bottom: 1px solid #000000;
+    background: #ffffff;
+  }
+  .resource-card-body {
+    padding: 10px;
+  }
+  .stack-card {
+    min-height: 300px;
+    width: 180px;
+    border: 1px solid #000000;
+    border-radius: 4px;
+    overflow: hidden;
+    text-align: center;
+    background-color: white
+  }
+  .stack-card-body {
+    font-weight: bold;
+    padding: 50% 0;
+  }
+  
