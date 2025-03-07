@@ -44,11 +44,19 @@ document.addEventListener('DOMContentLoaded', function() {
     // ===========================
     resourceCards.forEach(card => {
         card.addEventListener('click', function() {
-            resourceCards.forEach(c => c.classList.remove('selected'));
-            card.classList.add('selected');
-            selectedResource = card;
+            if (card.classList.contains('selected')) {
+                // If already selected, deselect it
+                card.classList.remove('selected');
+                selectedResource = null;
+            } else {
+                // Deselect all, then select this one
+                resourceCards.forEach(c => c.classList.remove('selected'));
+                card.classList.add('selected');
+                selectedResource = card;
+            }
         });
     });
+    
 
     // ===========================
     // Building Card Selection Logic

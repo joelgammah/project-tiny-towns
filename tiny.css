@@ -19,7 +19,7 @@ body {
 
   .red    { background-color: #ff3b3b; }
   .brown  { background-color: #8b4513; }
-  .blue   { background-color: #0DD1F3; }
+  .blue   { background-color: #2b93a8; }
   .yellow { background-color: #ffc800; }
   .white  { background-color: #f9f9f9; }
   .transparent  { background-color: transparent; }
@@ -116,6 +116,12 @@ body {
   }
   .factory-card {
     background: url('/Users/joelgammah/Desktop/Tiny Towns/card_bg/factory.png') no-repeat center / cover;
+    min-height: 300px;
+    position: relative;
+    background-size: 100% 100%;
+  }
+  .stack-card {
+    background: url('/Users/joelgammah/Desktop/Tiny Towns/card_bg/stack.png') no-repeat center / cover;
     min-height: 300px;
     position: relative;
     background-size: 100% 100%;
@@ -406,17 +412,5 @@ body {
   .resource-card-body {
     padding: 10px;
   }
-  .stack-card {
-    min-height: 300px;
-    width: 180px;
-    border: 1px solid #000000;
-    border-radius: 4px;
-    overflow: hidden;
-    text-align: center;
-    background-color: white
-  }
-  .stack-card-body {
-    font-weight: bold;
-    padding: 50% 0;
-  }
+  
   
