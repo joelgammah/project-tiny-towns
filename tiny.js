@@ -282,34 +282,90 @@ document.addEventListener('DOMContentLoaded', function() {
     // Compare player selection to a base pattern
     // (with optional rotation/flip logic if you want)
     // ===========================
-    function matchPlayerSelection(player, base) {
-        // Step 1: same # squares?
-        if (player.length !== base.length) return false;
+    function matchPlayerSelection(playerSquaresInfo, basePattern) {
+        // same # squares?
+        if (playerSquaresInfo.length !== basePattern.length) return false;
 
-        // Step 2: normalize both to top-left origin
-        const normPlayer = normalize(player);
-        const normBase = normalize(base);
+        // generate all transformations
+        const transformations = generateAllTransformations(basePattern);
 
-        // If you want rotation/flip, generate transformations of normBase and compare
-        // For simplicity, let's just compare the base orientation
-        return arraysMatchPositions(normPlayer, normBase);
+        // normalize player squares
+        const normPlayer = normalizePattern(playerSquaresInfo);
+
+        // if any transformation matches normPlayer, we have a match
+        return transformations.some(tf => arraysMatchPositions(normPlayer, tf));
+    }
+
+    // ===========================
+    // Generate all 8 transformations (original, rotate 90/180/270, flip, flip+rotate 90/180/270)
+    // ===========================
+    function generateAllTransformations(base) {
+        const results = [];
+
+        // Normalize the base first
+        const original = normalizePattern(base);
+        results.push(original);
+
+        // Rotate up to 3 times
+        let r1 = normalizePattern(rotate90(original));
+        results.push(r1);
+
+        let r2 = normalizePattern(rotate90(r1));
+        results.push(r2);
+
+        let r3 = normalizePattern(rotate90(r2));
+        results.push(r3);
+
+        // Flip horizontally
+        let flipped = normalizePattern(flipHorizontal(original));
+        results.push(flipped);
+
+        // Rotate the flipped 3 times
+        let fr1 = normalizePattern(rotate90(flipped));
+        results.push(fr1);
+
+        let fr2 = normalizePattern(rotate90(fr1));
+        results.push(fr2);
+
+        let fr3 = normalizePattern(rotate90(fr2));
+        results.push(fr3);
+
+        return results;
+    }
+
+    function rotate90(pattern) {
+        // row => col, col => -row
+        return pattern.map(({ color, row, col }) => ({
+            color,
+            row: col,
+            col: -row
+        }));
+    }
+
+    function flipHorizontal(pattern) {
+        // row stays same, col => -col
+        return pattern.map(({ color, row, col }) => ({
+            color,
+            row,
+            col: -col
+        }));
     }
 
     // ===========================
     // Normalize so top-left = (0,0)
     // ===========================
-    function normalize(pattern) {
+    function normalizePattern(pattern) {
         const minRow = Math.min(...pattern.map(p => p.row));
         const minCol = Math.min(...pattern.map(p => p.col));
-        return pattern.map(p => ({
+
+        const shifted = pattern.map(p => ({
             color: p.color,
             row: p.row - minRow,
             col: p.col - minCol
-        })).sort((a,b) => {
-            // sort by (row,col) for stable comparison
-            if (a.row === b.row) return a.col - b.col;
-            return a.row - b.row;
-        });
+        }));
+        // sort for stable comparison
+        shifted.sort((a,b) => (a.row === b.row ? a.col - b.col : a.row - b.row));
+        return shifted;
     }
 
     // ===========================
