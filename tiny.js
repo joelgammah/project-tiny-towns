@@ -234,7 +234,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
         if (foundMatch) {
             alert(`Valid ${selectedBuilding} pattern found! Click one of the selected squares to place it.`);
-            enableBuildingPlacement(selectedSquares, selectedBuilding);
+        
+            // Freeze the squares array
+            const finalPatternSquares = [...selectedSquares];
+        
+            enableBuildingPlacement(finalPatternSquares, selectedBuilding);
         } else {
             alert(`Invalid ${selectedBuilding} pattern.`);
             clearSelectedSquares();
@@ -392,18 +396,21 @@ document.addEventListener('DOMContentLoaded', function() {
     // ===========================
     // If valid pattern found, let user place building
     // ===========================
-    function enableBuildingPlacement(squares, buildingName) {
-        squares.forEach(square => {
+    function enableBuildingPlacement(patternSquares, buildingName) {
+        patternSquares.forEach(square => {
             square.addEventListener('click', function placeBuilding() {
                 const cell = square.closest('.cell');
                 placeBuildingIcon(cell, buildingName);
                 cell.classList.add('locked');
-
-                squares.forEach(sq => {
-                    if (sq !== square) clearCell(sq.closest('.cell'));
+    
+                // Clear all pattern squares except the chosen one
+                patternSquares.forEach(sq => {
+                    if (sq !== square) {
+                        clearCell(sq.closest('.cell'));
+                    }
                 });
-
-                clearSelectedSquares();
+    
+                clearSelectedSquares();   // Clear the global `selectedSquares`, ignoring any new random squares
                 deselectAllCards();
                 rebindGridCellListeners();
             }, { once: true });
