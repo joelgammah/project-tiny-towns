@@ -3,72 +3,76 @@ document.addEventListener('DOMContentLoaded', function() {
     const gridCells = document.querySelectorAll('.cell.selectable');
 
     let selectedResource = null;
-    let selectedSquares = [];  // Tracks the 3 manually selected squares for Cottage check
-    let selectedBuilding = null;  // Tracks which building card (like Cottage) the player selected
+    let selectedSquares = [];
+    let selectedBuilding = null;
+
+    const colorToResource = {
+        yellow: 'Wheat',
+        red: 'Brick',
+        blue: 'Glass',
+        brown: 'Wood',
+        gray: 'Stone'
+    };
+    
 
     // ===========================
-    // List of all possible resources
+    // Buildings Configuration (Patterns and Icons)
     // ===========================
-    const resources = [
-        { name: "Wheat", color: "yellow" },
-        { name: "Brick", color: "red" },
-        { name: "Glass", color: "blue" },
-        { name: "Wood", color: "brown" },
-        { name: "Stone", color: "gray" }
-    ];
+    const buildings = {
+        Cottage: {
+            icon: 'cottage_ic.png',
+            patterns: [
+                ['yellow', 'red', 'blue'],
+                ['red', 'blue', 'yellow'],
+                ['blue', 'yellow', 'red'],
+                ['yellow', 'blue', 'red'],
+                ['yellow', 'red', 'blue'],
+                ['blue', 'red', 'yellow']
+            ]
+        },
+        Farm: { icon: 'farm_ic.png', patterns: [['yellow', 'yellow', 'brown', 'brown']] },
+        Chapel: { icon: 'chapel_ic.png', patterns: [['blue', 'gray', 'blue', 'gray']] },
+        Tavern: { icon: 'tavern_ic.png', patterns: [['red', 'red', 'blue']] },
+        Well: { icon: 'well_ic.png', patterns: [['brown', 'gray']] },
+        Theater: { icon: 'theater_ic.png', patterns: [['gray', 'brown', 'blue', 'brown']] },
+        Factory: { icon: 'factory_ic.png', patterns: [['brown', 'red', 'gray', 'gray', 'red']] },
+        Catedral: { icon: 'monu_ic.png', patterns: [['yellow', 'gray', 'blue']] }
+    };
 
     // ===========================
-    // Resource selection logic
+    // Resource Selection Logic
     // ===========================
     resourceCards.forEach(card => {
         card.addEventListener('click', function() {
-            if (selectedResource && selectedResource !== card) {
-                selectedResource.classList.remove('selected');
-            }
-
-            if (card.classList.contains('selected')) {
-                card.classList.remove('selected');
-                selectedResource = null;
-            } else {
-                card.classList.add('selected');
-                selectedResource = card;
-            }
+            resourceCards.forEach(c => c.classList.remove('selected'));
+            card.classList.add('selected');
+            selectedResource = card;
         });
     });
 
     // ===========================
-    // Building card selection logic
-    // Only allows one building to be selected at a time (like Cottage)
+    // Building Card Selection Logic
     // ===========================
     document.querySelectorAll('.card').forEach(card => {
         card.addEventListener('click', function() {
             document.querySelectorAll('.card').forEach(c => c.classList.remove('selected'));
-            this.classList.add('selected');
-            selectedBuilding = this.classList.contains('cottage-card') ? 'Cottage' : null;
+            card.classList.add('selected');
+            selectedBuilding = card.getAttribute('data-building');
+            checkManualPatternSelection();
         });
     });
 
     // ===========================
-    // Place resource into grid cell (skip locked cells)
+    // Place Resources in Grid Cells
     // ===========================
     gridCells.forEach(cell => {
         cell.addEventListener('click', function() {
             if (selectedResource && !cell.classList.contains('locked')) {
                 cell.innerHTML = '';
-
                 const resourceSquare = document.createElement('div');
                 resourceSquare.classList.add('square');
-
-                const square = selectedResource.querySelector('.square');
-                if (square) {
-                    const colorClass = Array.from(square.classList).find(cls =>
-                        ['red', 'brown', 'blue', 'yellow', 'white', 'gray'].includes(cls)
-                    );
-                    if (colorClass) {
-                        resourceSquare.classList.add(colorClass);
-                    }
-                }
-
+                const colorClass = selectedResource.querySelector('.square').classList[1];
+                resourceSquare.classList.add(colorClass);
                 cell.appendChild(resourceSquare);
                 makeSquareSelectable(resourceSquare);
 
@@ -81,101 +85,64 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // ===========================
-    // Make placed squares selectable/deselectable
-    // Enables manual 3-square selection for Cottage pattern
+    // Select/Deselect Squares for Pattern Matching
     // ===========================
     function makeSquareSelectable(square) {
+        if (square.hasClickListener) return;
+
         square.addEventListener('click', function(event) {
             event.stopPropagation();
-
             if (square.classList.contains('selected')) {
                 square.classList.remove('selected');
-                selectedSquares = selectedSquares.filter(sq => sq !== square);
-            } else {
-                if (selectedSquares.length < 3) {
-                    square.classList.add('selected');
-                    selectedSquares.push(square);
-
-                    if (selectedSquares.length === 3) {
-                        checkManualCottagePatternSelection();
-                    }
-                }
+                selectedSquares = selectedSquares.filter(s => s !== square);
+            } else if (selectedSquares.length < 5) {
+                square.classList.add('selected');
+                selectedSquares.push(square);
             }
         });
+
+        square.hasClickListener = true;  // Prevents double-binding
     }
 
     // ===========================
-    // Check if manually selected squares match any valid Cottage pattern
-    // Checks all rotations and flips (order-independent)
+    // Check Selected Squares Against Building Patterns
     // ===========================
-    function checkManualCottagePatternSelection() {
-        const colors = selectedSquares.map(square => {
-            return Array.from(square.classList).find(cls =>
-                ['red', 'brown', 'blue', 'yellow', 'white', 'gray'].includes(cls)
-            );
-        });
+    function checkManualPatternSelection() {
+        if (!selectedBuilding || !buildings[selectedBuilding]) {
+            alert("Please select a building card.");
+            return;
+        }
 
-        const allPermutations = getPermutations(colors);
+        const colors = selectedSquares.map(square => 
+            Array.from(square.classList).find(cls => 
+                ['red', 'brown', 'blue', 'yellow', 'gray'].includes(cls)
+            )
+        );
 
-        const isValid = allPermutations.some(permutation =>
-            cottagePatterns.some(pattern => arraysMatch(permutation, pattern))
+        const permutations = getPermutations(colors);
+        const validPatterns = buildings[selectedBuilding].patterns;
+
+        const isValid = permutations.some(perm => 
+            validPatterns.some(pattern => arraysMatch(perm, pattern))
         );
 
         if (isValid) {
-            alert("You found a valid Cottage pattern! Now select the Cottage building card to place it.");
-            enableCottagePlacement(selectedSquares);
+            alert(`Valid ${selectedBuilding} pattern found! Click a square to place it.`);
+            enableBuildingPlacement(selectedSquares, selectedBuilding);
         } else {
-            alert("This is not a valid Cottage pattern!");
+            alert(`Invalid ${selectedBuilding} pattern.`);
+            clearSelectedSquares();
         }
-
-        selectedSquares.forEach(square => square.classList.remove('selected'));
-        selectedSquares = [];
     }
 
     // ===========================
-    // Generate all permutations of 3 selected squares (order-independent matching)
+    // Place Building Icon and Lock Cell
     // ===========================
-    function getPermutations(arr) {
-        if (arr.length <= 1) return [arr];
-        const result = [];
-        for (let i = 0; i < arr.length; i++) {
-            const rest = getPermutations(arr.slice(0, i).concat(arr.slice(i + 1)));
-            for (const perm of rest) {
-                result.push([arr[i]].concat(perm));
-            }
-        }
-        return result;
-    }
-
-    // ===========================
-    // Cottage pattern array (3 squares - no empty)
-    // Supports all rotations and flips
-    // ===========================
-    const cottagePatterns = [
-        ['yellow', 'red', 'blue'],
-        ['red', 'blue', 'yellow'],
-        ['blue', 'yellow', 'red'],
-        ['yellow', 'blue', 'red'],
-        ['yellow', 'red', 'blue'],
-        ['blue', 'red', 'yellow']
-    ];
-
-    // ===========================
-    // Place Cottage icon and lock the cell
-    // Cleared cells are available for future resources
-    // Cottage card is deselected after placement
-    // ===========================
-    function enableCottagePlacement(squares) {
+    function enableBuildingPlacement(squares, buildingName) {
         squares.forEach(square => {
-            square.addEventListener('click', function handleClick() {
-                if (selectedBuilding !== 'Cottage') {
-                    alert("You must select the Cottage building card before placing the Cottage.");
-                    return;
-                }
-
+            square.addEventListener('click', function placeBuilding() {
                 const cell = square.closest('.cell');
-                placeCottageIcon(cell);
-
+                placeBuildingIcon(cell, buildingName);
                 cell.classList.add('locked');
 
                 squares.forEach(sq => {
@@ -184,79 +151,96 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 });
 
-                squares.forEach(sq => {
-                    const newCell = sq.closest('.cell').cloneNode(true);
-                    sq.closest('.cell').replaceWith(newCell);
-                });
-
+                clearSelectedSquares();
                 deselectAllCards();
-                selectedSquares = [];
-                selectedBuilding = null;
-
                 rebindGridCellListeners();
             }, { once: true });
         });
     }
 
     // ===========================
-    // Place Cottage icon into the cell
+    // Place Building Icon in Cell
     // ===========================
-    function placeCottageIcon(cell) {
+    function placeBuildingIcon(cell, buildingName) {
         cell.innerHTML = '';
         const icon = document.createElement('img');
-        icon.src = '/Users/joelgammah/Desktop/Tiny Towns/icons/cottage_ic.png';
-        icon.classList.add('cottage-grid-icon');
+        icon.src = `/Users/joelgammah/Desktop/Tiny Towns/icons/${buildings[buildingName].icon}`;
+        icon.classList.add(`${buildingName.toLowerCase()}-grid-icon`);
         cell.appendChild(icon);
     }
 
     // ===========================
-    // Clear the content of a cell
+    // Clear Cell (For Building Placement)
     // ===========================
     function clearCell(cell) {
         cell.innerHTML = '';
     }
 
     // ===========================
-    // Compare two arrays for equality
+    // Clear Selected Squares (After Building Placement or Invalid Pattern)
+    // ===========================
+    function clearSelectedSquares() {
+        selectedSquares.forEach(square => square.classList.remove('selected'));
+        selectedSquares = [];
+        selectedBuilding = null;
+    }
+
+    // ===========================
+    // Deselect All Building Cards
+    // ===========================
+    function deselectAllCards() {
+        document.querySelectorAll('.card').forEach(card => card.classList.remove('selected'));
+    }
+
+    // ===========================
+    // Compare Two Arrays
     // ===========================
     function arraysMatch(a, b) {
         return a.length === b.length && a.every((val, index) => val === b[index]);
     }
 
     // ===========================
-    // Deselect all building cards
+    // Generate All Permutations
     // ===========================
-    function deselectAllCards() {
-        document.querySelectorAll('.card').forEach(card => {
-            card.classList.remove('selected');
+    function getPermutations(arr) {
+        if (arr.length <= 1) return [arr];
+        const result = [];
+        arr.forEach((color, index) => {
+            const rest = arr.slice(0, index).concat(arr.slice(index + 1));
+            const restPerms = getPermutations(rest);
+            restPerms.forEach(perm => result.push([color].concat(perm)));
         });
+        return result;
     }
 
     // ===========================
-    // Rebind listeners to all placed squares (after Cottage placement)
-    // ===========================
-    function rebindGridCellListeners() {
-        const allPlacedSquares = document.querySelectorAll('.board .cell .square');
-        allPlacedSquares.forEach(makeSquareSelectable);
-    }
-
-    enableGridResourceSelection();
-
-    // ===========================
-    // Refresh the market with 3 random resources
+    // Refresh Market (Replace All Resource Cards)
     // ===========================
     function refreshMarket() {
-        const resourceCards = document.querySelectorAll('.resource-card');
-        const shuffled = resources.sort(() => 0.5 - Math.random());
-        const selectedResources = shuffled.slice(0, 3);
-
-        resourceCards.forEach((card, index) => {
-            const resource = selectedResources[index];
+        const allColors = ['yellow', 'red', 'blue', 'brown', 'gray'];
+    
+        document.querySelectorAll('.resource-card').forEach(card => {
+            const color = allColors[Math.floor(Math.random() * allColors.length)];
+            const resourceName = colorToResource[color];  // Use mapping to get proper name
+    
             const header = card.querySelector('.resource-card-header');
-            header.textContent = resource.name;
-
+            header.textContent = resourceName;  // Show the actual resource name (like Wheat)
+    
             const square = card.querySelector('.square');
-            square.className = `square ${resource.color}`;
+            square.className = `square ${color}`;  // Still use color for the square
         });
     }
+    
+
+    // ===========================
+    // Rebind Listeners for All Existing Squares
+    // ===========================
+    function rebindGridCellListeners() {
+        document.querySelectorAll('.board .cell .square').forEach(makeSquareSelectable);
+    }
+
+    // ===========================
+    // Initialize Listeners
+    // ===========================
+    rebindGridCellListeners();
 });

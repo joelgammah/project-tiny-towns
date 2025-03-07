@@ -251,6 +251,23 @@ body {
     left: 50%;             /* Move to middle horizontally */
     transform: translate(-50%, -50%);  /* Center exactly at middle */
   }
+  .cottager-grid-icon,
+  .farmr-grid-icon,
+  .chapel-grid-icon,
+  .tavern-grid-icon,
+  .well-grid-icon,
+  .theater-grid-icon,
+  .factory-grid-icon,
+  .catedral-grid-icon {
+      width: 45%;
+      height: 45%;
+      object-fit: contain;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+  }
+
 
 /*---------------------  Pictures Below  ------------------------*/  
   .cottage-image {
