@@ -3,8 +3,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const gridCells = document.querySelectorAll('.cell.selectable');
 
     let selectedResource = null;
-    let selectedSquares = [];
-    let selectedBuilding = null;
+    let selectedSquares = [];    // Array of DOM elements (the squares)
+    let selectedBuilding = null; // Which building the player chose (e.g. "Cottage")
 
     const colorToResource = {
         yellow: 'Wheat',
@@ -13,30 +13,111 @@ document.addEventListener('DOMContentLoaded', function() {
         brown: 'Wood',
         gray: 'Stone'
     };
-    
 
     // ===========================
-    // Buildings Configuration (Patterns and Icons)
+    // Buildings Configuration
+    // Each building has:
+    //   - icon: the icon file
+    //   - basePatterns: an array of base shapes (each is an array of {color, row, col})
     // ===========================
     const buildings = {
         Cottage: {
             icon: 'cottage_ic.png',
-            patterns: [
-                ['yellow', 'red', 'blue'],
-                ['red', 'blue', 'yellow'],
-                ['blue', 'yellow', 'red'],
-                ['yellow', 'blue', 'red'],
-                ['yellow', 'red', 'blue'],
-                ['blue', 'red', 'yellow']
+            // Example: 2x2 shape with top-left empty, top-right = yellow, bottom-left = red, bottom-right = blue
+            basePatterns: [
+                [
+                    { color: 'yellow', row: 0, col: 1 },
+                    { color: 'red',    row: 1, col: 0 },
+                    { color: 'blue',   row: 1, col: 1 }
+                ]
             ]
         },
-        Farm: { icon: 'farm_ic.png', patterns: [['yellow', 'yellow', 'brown', 'brown']] },
-        Chapel: { icon: 'chapel_ic.png', patterns: [['blue', 'gray', 'blue', 'gray']] },
-        Tavern: { icon: 'tavern_ic.png', patterns: [['red', 'red', 'blue']] },
-        Well: { icon: 'well_ic.png', patterns: [['brown', 'gray']] },
-        Theater: { icon: 'theater_ic.png', patterns: [['gray', 'brown', 'blue', 'brown']] },
-        Factory: { icon: 'factory_ic.png', patterns: [['brown', 'red', 'gray', 'gray', 'red']] },
-        Catedral: { icon: 'monu_ic.png', patterns: [['yellow', 'gray', 'blue']] }
+        Farm: {
+            icon: 'farm_ic.png',
+            // 2x2 shape with top-left = yellow, top-right = yellow, bottom-left = brown, bottom-right = brown
+            basePatterns: [
+                [
+                    { color: 'yellow', row: 0, col: 0 },
+                    { color: 'yellow', row: 0, col: 1 },
+                    { color: 'brown',  row: 1, col: 0 },
+                    { color: 'brown',  row: 1, col: 1 }
+                ]
+            ]
+        },
+        Chapel: {
+            icon: 'chapel_ic.png',
+            // reverse L-shape or 2x3 shape with top-left empty, top-middle empty, 
+            // top-right = blue, bottom-left = gray, bottom-middle = blue, bottom-right = gray
+            basePatterns: [
+                [
+                    { color: 'blue', row: 0, col: 2 },
+                    { color: 'gray', row: 1, col: 0 },
+                    { color: 'blue',  row: 1, col: 1 },
+                    { color: 'gray',  row: 1, col: 2 }
+                ]
+            ]
+        },
+        Tavern: {
+            icon: 'tavern_ic.png',
+            // straight line or 1x3 shape with left = red, middle = red, right = blue
+            basePatterns: [
+                [
+                    { color: 'red', row: 0, col: 0 },
+                    { color: 'red', row: 0, col: 1 },
+                    { color: 'blue',  row: 0, col: 2 }
+                ]
+            ]
+        },
+        Well: {
+            icon: 'well_ic.png',
+            // 2 squares - side by side or 1x2 shape with left = brown, right = gray
+            basePatterns: [
+                [
+                    { color: 'brown', row: 0, col: 0 },
+                    { color: 'gray', row: 0, col: 1 }
+                ]
+            ]
+        },
+        Theater: {
+            icon: 'theater_ic.png',
+            // upside down T-shape or 2x3 shape with top-left empty, top-middle = gray, 
+            // top-right empty, bottom-left = brown, bottom-middle = blue, bottom-right = brown
+            basePatterns: [
+                [
+                    { color: 'gray', row: 0, col: 1 },
+                    { color: 'brown', row: 1, col: 0 },
+                    { color: 'blue',  row: 1, col: 1 },
+                    { color: 'brown',  row: 1, col: 2 }
+                ]
+            ]
+        },
+        Factory: {
+            icon: 'factory_ic.png',
+            // L-shape or 2x4 shape with top-left = brown, 1st top-middle empty,
+            // 2nd top-middle empty, top-right empty, bottom-left = red, 
+            // 1st bottom-middle = gray, 2nd bottom-middle = gray, bottom-right = red
+            basePatterns: [
+                [
+                    { color: 'brown', row: 0, col: 0 },
+                    { color: 'red', row: 1, col: 0 },
+                    { color: 'gray', row: 1, col: 1 },
+                    { color: 'gray',  row: 1, col: 2 },
+                    { color: 'red',  row: 1, col: 3 }
+                ]
+            ]
+        },
+        Catedral: {
+            icon: 'monu_ic.png',
+            // Example: 2x2 shape with top-left empty, top-right = yellow, bottom-left = gray, bottom-right = blue
+            basePatterns: [
+                [
+                    { color: 'yellow', row: 0, col: 1 },
+                    { color: 'gray',    row: 1, col: 0 },
+                    { color: 'blue',   row: 1, col: 1 }
+                ]
+            ]
+        }
+        // TODO: define basePatterns for Chapel, Tavern, etc.
     };
 
     // ===========================
@@ -44,19 +125,17 @@ document.addEventListener('DOMContentLoaded', function() {
     // ===========================
     resourceCards.forEach(card => {
         card.addEventListener('click', function() {
+            // Toggle the resource card selection
             if (card.classList.contains('selected')) {
-                // If already selected, deselect it
                 card.classList.remove('selected');
                 selectedResource = null;
             } else {
-                // Deselect all, then select this one
                 resourceCards.forEach(c => c.classList.remove('selected'));
                 card.classList.add('selected');
                 selectedResource = card;
             }
         });
     });
-    
 
     // ===========================
     // Building Card Selection Logic
@@ -66,26 +145,31 @@ document.addEventListener('DOMContentLoaded', function() {
             document.querySelectorAll('.card').forEach(c => c.classList.remove('selected'));
             card.classList.add('selected');
             selectedBuilding = card.getAttribute('data-building');
-            checkManualPatternSelection();
+            checkManualPatternSelection(); // We'll attempt to validate pattern once building is picked
         });
     });
 
     // ===========================
-    // Place Resources in Grid Cells
+    // Place Resources in Grid Cells (Only If Cell Is Not Occupied)
     // ===========================
     gridCells.forEach(cell => {
         cell.addEventListener('click', function() {
-            if (selectedResource && !cell.classList.contains('locked')) {
+            if (selectedResource && !cell.classList.contains('locked') && !cell.classList.contains('occupied')) {
+                // Place the resource
                 cell.innerHTML = '';
                 const resourceSquare = document.createElement('div');
                 resourceSquare.classList.add('square');
                 const colorClass = selectedResource.querySelector('.square').classList[1];
                 resourceSquare.classList.add(colorClass);
                 cell.appendChild(resourceSquare);
-                makeSquareSelectable(resourceSquare);
 
+                // Mark cell as occupied to prevent overwriting
+                cell.classList.add('occupied');
+
+                makeSquareSelectable(resourceSquare);
                 refreshMarket();
 
+                // Deselect the resource card
                 selectedResource.classList.remove('selected');
                 selectedResource = null;
             }
@@ -93,49 +177,63 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // ===========================
-    // Select/Deselect Squares for Pattern Matching
+    // Allows squares to be selected/deselected for pattern matching
     // ===========================
     function makeSquareSelectable(square) {
         if (square.hasClickListener) return;
-
-        square.addEventListener('click', function(event) {
-            event.stopPropagation();
+        square.addEventListener('click', function(e) {
+            e.stopPropagation();
             if (square.classList.contains('selected')) {
                 square.classList.remove('selected');
                 selectedSquares = selectedSquares.filter(s => s !== square);
-            } else if (selectedSquares.length < 5) {
-                square.classList.add('selected');
-                selectedSquares.push(square);
+            } else {
+                // Arbitrary limit, adjust if needed
+                if (selectedSquares.length < 5) {
+                    square.classList.add('selected');
+                    selectedSquares.push(square);
+                }
             }
         });
-
-        square.hasClickListener = true;  // Prevents double-binding
+        square.hasClickListener = true;
     }
 
     // ===========================
-    // Check Selected Squares Against Building Patterns
+    // Attempt pattern matching after user picks squares & building
     // ===========================
     function checkManualPatternSelection() {
+        // 1) Must have building chosen
         if (!selectedBuilding || !buildings[selectedBuilding]) {
-            alert("Please select a building card.");
+            return; // no building chosen or invalid
+        }
+        // 2) If no squares are selected, do nothing
+        if (selectedSquares.length === 0) {
             return;
         }
 
-        const colors = selectedSquares.map(square => 
-            Array.from(square.classList).find(cls => 
-                ['red', 'brown', 'blue', 'yellow', 'gray'].includes(cls)
-            )
-        );
+        // Build an array of { color, row, col } from selectedSquares
+        const squaresInfo = selectedSquares.map(sq => {
+            const color = Array.from(sq.classList).find(cls =>
+                ['red','brown','blue','yellow','gray'].includes(cls)
+            );
+            const cell = sq.closest('.cell');
+            const row = parseInt(cell.dataset.row);
+            const col = parseInt(cell.dataset.col);
+            return { color, row, col };
+        });
 
-        const permutations = getPermutations(colors);
-        const validPatterns = buildings[selectedBuilding].patterns;
+        // 3) Check connectivity
+        if (!isConnected(squaresInfo)) {
+            alert("Selected squares are not adjacent. Try again!");
+            clearSelectedSquares();
+            return;
+        }
 
-        const isValid = permutations.some(perm => 
-            validPatterns.some(pattern => arraysMatch(perm, pattern))
-        );
+        // 4) We'll compare squaresInfo to building's base patterns (including rotations/flips if you want)
+        const basePatterns = buildings[selectedBuilding].basePatterns; 
+        const foundMatch = basePatterns.some(base => matchPlayerSelection(squaresInfo, base));
 
-        if (isValid) {
-            alert(`Valid ${selectedBuilding} pattern found! Click a square to place it.`);
+        if (foundMatch) {
+            alert(`Valid ${selectedBuilding} pattern found! Click one of the selected squares to place it.`);
             enableBuildingPlacement(selectedSquares, selectedBuilding);
         } else {
             alert(`Invalid ${selectedBuilding} pattern.`);
@@ -144,7 +242,99 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // ===========================
-    // Place Building Icon and Lock Cell
+    // BFS or DFS check for adjacency
+    // ===========================
+    function isConnected(squaresInfo) {
+        if (squaresInfo.length === 0) return false;
+        const visited = new Set();
+        const queue = [ squaresInfo[0] ];
+        visited.add(keyOf(squaresInfo[0]));
+
+        while (queue.length) {
+            const current = queue.pop();
+            // 4-directional neighbors
+            const neighbors = [
+                { row: current.row+1, col: current.col },
+                { row: current.row-1, col: current.col },
+                { row: current.row, col: current.col+1 },
+                { row: current.row, col: current.col-1 }
+            ];
+            for (const n of neighbors) {
+                // If squaresInfo includes that neighbor, let's mark visited
+                const match = squaresInfo.find(s => s.row === n.row && s.col === n.col);
+                if (match) {
+                    const k = keyOf(match);
+                    if (!visited.has(k)) {
+                        visited.add(k);
+                        queue.push(match);
+                    }
+                }
+            }
+        }
+        return visited.size === squaresInfo.length;
+    }
+
+    function keyOf(obj) {
+        return `${obj.row},${obj.col}`;
+    }
+
+    // ===========================
+    // Compare player selection to a base pattern
+    // (with optional rotation/flip logic if you want)
+    // ===========================
+    function matchPlayerSelection(player, base) {
+        // Step 1: same # squares?
+        if (player.length !== base.length) return false;
+
+        // Step 2: normalize both to top-left origin
+        const normPlayer = normalize(player);
+        const normBase = normalize(base);
+
+        // If you want rotation/flip, generate transformations of normBase and compare
+        // For simplicity, let's just compare the base orientation
+        return arraysMatchPositions(normPlayer, normBase);
+    }
+
+    // ===========================
+    // Normalize so top-left = (0,0)
+    // ===========================
+    function normalize(pattern) {
+        const minRow = Math.min(...pattern.map(p => p.row));
+        const minCol = Math.min(...pattern.map(p => p.col));
+        return pattern.map(p => ({
+            color: p.color,
+            row: p.row - minRow,
+            col: p.col - minCol
+        })).sort((a,b) => {
+            // sort by (row,col) for stable comparison
+            if (a.row === b.row) return a.col - b.col;
+            return a.row - b.row;
+        });
+    }
+
+    // ===========================
+    // Compare two normalized arrays of {color, row, col}
+    // ===========================
+    function arraysMatchPositions(a, b) {
+        if (a.length !== b.length) return false;
+        for (let i=0; i<a.length; i++) {
+            if (a[i].color !== b[i].color) return false;
+            if (a[i].row !== b[i].row) return false;
+            if (a[i].col !== b[i].col) return false;
+        }
+        return true;
+    }
+
+    // ===========================
+    // BFS or DFS if you want to generate rotations/flips
+    // (Optional if you need rotated shapes)
+    // ===========================
+    // function rotate90(...) {}
+    // function flipHorizontal(...) {}
+    // etc.
+
+    // ===========================
+    // If valid pattern found, let user place building
     // ===========================
     function enableBuildingPlacement(squares, buildingName) {
         squares.forEach(square => {
@@ -154,9 +344,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 cell.classList.add('locked');
 
                 squares.forEach(sq => {
-                    if (sq !== square) {
-                        clearCell(sq.closest('.cell'));
-                    }
+                    if (sq !== square) clearCell(sq.closest('.cell'));
                 });
 
                 clearSelectedSquares();
@@ -166,9 +354,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // ===========================
-    // Place Building Icon in Cell
-    // ===========================
     function placeBuildingIcon(cell, buildingName) {
         cell.innerHTML = '';
         const icon = document.createElement('img');
@@ -177,78 +362,54 @@ document.addEventListener('DOMContentLoaded', function() {
         cell.appendChild(icon);
     }
 
-    // ===========================
-    // Clear Cell (For Building Placement)
-    // ===========================
+    // Clears cell content & frees it
     function clearCell(cell) {
         cell.innerHTML = '';
+        cell.classList.remove('occupied');
     }
 
-    // ===========================
-    // Clear Selected Squares (After Building Placement or Invalid Pattern)
-    // ===========================
     function clearSelectedSquares() {
-        selectedSquares.forEach(square => square.classList.remove('selected'));
+        selectedSquares.forEach(sq => sq.classList.remove('selected'));
         selectedSquares = [];
         selectedBuilding = null;
     }
 
-    // ===========================
-    // Deselect All Building Cards
-    // ===========================
     function deselectAllCards() {
         document.querySelectorAll('.card').forEach(card => card.classList.remove('selected'));
     }
 
-    // ===========================
-    // Compare Two Arrays
-    // ===========================
-    function arraysMatch(a, b) {
-        return a.length === b.length && a.every((val, index) => val === b[index]);
-    }
-
-    // ===========================
-    // Generate All Permutations
-    // ===========================
-    function getPermutations(arr) {
-        if (arr.length <= 1) return [arr];
-        const result = [];
-        arr.forEach((color, index) => {
-            const rest = arr.slice(0, index).concat(arr.slice(index + 1));
-            const restPerms = getPermutations(rest);
-            restPerms.forEach(perm => result.push([color].concat(perm)));
-        });
-        return result;
-    }
-
-    // ===========================
-    // Refresh Market (Replace All Resource Cards)
-    // ===========================
-    function refreshMarket() {
-        const allColors = ['yellow', 'red', 'blue', 'brown', 'gray'];
-    
-        document.querySelectorAll('.resource-card').forEach(card => {
-            const color = allColors[Math.floor(Math.random() * allColors.length)];
-            const resourceName = colorToResource[color];  // Use mapping to get proper name
-    
-            const header = card.querySelector('.resource-card-header');
-            header.textContent = resourceName;  // Show the actual resource name (like Wheat)
-    
-            const square = card.querySelector('.square');
-            square.className = `square ${color}`;  // Still use color for the square
-        });
-    }
-    
-
-    // ===========================
-    // Rebind Listeners for All Existing Squares
-    // ===========================
+    // BFS or DFS rebind
     function rebindGridCellListeners() {
         document.querySelectorAll('.board .cell .square').forEach(makeSquareSelectable);
     }
 
-    // ===========================
-    // Initialize Listeners
-    // ===========================
+    // Compare color arrays for your simpler patterns
+    function arraysMatch(a, b) {
+        return a.length === b.length && a.every((val, idx) => val === b[idx]);
+    }
+
+    function getPermutations(arr) {
+        if (arr.length <= 1) return [arr];
+        const result = [];
+        arr.forEach((color, idx) => {
+            const rest = [...arr.slice(0, idx), ...arr.slice(idx+1)];
+            const perms = getPermutations(rest);
+            perms.forEach(p => result.push([color, ...p]));
+        });
+        return result;
+    }
+
+    function refreshMarket() {
+        const allColors = ['yellow', 'red', 'blue', 'brown', 'gray'];
+        document.querySelectorAll('.resource-card').forEach(card => {
+            const color = allColors[Math.floor(Math.random() * allColors.length)];
+            const resourceName = colorToResource[color];
+            const header = card.querySelector('.resource-card-header');
+            header.textContent = resourceName;
+            const square = card.querySelector('.square');
+            square.className = `square ${color}`;
+        });
+    }
+
     rebindGridCellListeners();
 });

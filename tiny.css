@@ -42,7 +42,7 @@ body {
   }
   .card {
     min-height: 300px;
-    width: 190px;
+    width: 165px;
     border: 1px solid #000000;
     border-radius: 10px;
     overflow: hidden;
