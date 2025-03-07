@@ -72,6 +72,55 @@ body {
   .card.selected {
     outline: 6px solid #0dcf6b; 
   }
+  .cathedral-card {
+    background: url("/Users/joelgammah/Desktop/Tiny Towns/card_bg/caterina.png") no-repeat center / cover;
+    min-height: 300px;
+    position: relative;
+    background-size: 100% 100%; 
+  }
+  .cottage-card {
+    background: url('/Users/joelgammah/Desktop/Tiny Towns/card_bg/cottage.png') no-repeat center / cover;
+    min-height: 300px;
+    position: relative;
+    background-size: 100% 100%; 
+  }
+  .farm-card {
+    background: url('/Users/joelgammah/Desktop/Tiny Towns/card_bg/farm.png') no-repeat center / cover;
+    min-height: 300px;
+    position: relative;
+    background-size: 100% 100%;
+  }
+  .chapel-card {
+    background: url('/Users/joelgammah/Desktop/Tiny Towns/card_bg/chapel.png') no-repeat center / cover;
+    min-height: 300px;
+    position: relative;
+    background-size: 100% 100%;
+  }
+  .tavern-card {
+    background: url('/Users/joelgammah/Desktop/Tiny Towns/card_bg/tavern.png') no-repeat center / cover;
+    min-height: 300px;
+    position: relative;
+    background-size: 100% 100%;
+  }
+  .well-card {
+    background: url('/Users/joelgammah/Desktop/Tiny Towns/card_bg/well.png') no-repeat center / cover;
+    min-height: 300px;
+    position: relative;
+    background-size: 100% 100%;
+  }
+  .theater-card {
+    background: url('/Users/joelgammah/Desktop/Tiny Towns/card_bg/theater.png') no-repeat center / cover;
+    min-height: 300px;
+    position: relative;
+    background-size: 100% 100%;
+  }
+  .factory-card {
+    background: url('/Users/joelgammah/Desktop/Tiny Towns/card_bg/factory.png') no-repeat center / cover;
+    min-height: 300px;
+    position: relative;
+    background-size: 100% 100%;
+  }
+  
 
   
   .image-pattern-grid {
@@ -157,6 +206,11 @@ body {
     margin-left: 80px; 
   }
   .factory-icon {
+    width: auto;   
+    height: auto;            
+    margin-left: 80px; 
+  }
+  .monument-icon {
     width: auto;   
     height: auto;            
     margin-left: 80px; 
@@ -285,6 +339,10 @@ body {
   }
   .cell.selectable:hover {
     background-color: #a4bcd2; 
+  }
+  .cell.locked {
+    background-color: #e0e0e0;  
+    pointer-events: none;       
   }
 
   .selectable {
