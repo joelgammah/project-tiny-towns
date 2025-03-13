@@ -1,0 +1,51 @@
+1.0 Understanding Pattern Validation.
+
+I want us to look at the Pattern Matching logic again. We've done a great job so far. 
+We've also started well. So this is what we currently have. 
+If I select the correct number of resources on the grid and they match a 
+building's patterns (in this case a list of the colors), I am able to select 
+a building and place it onto the grid.
+
+For example if I select these resources regardless of where they are positioned 
+on the grid: 'yellow' --> 'blue'  --> 'red', I am able to select and place 
+the Cottage icon on my grid. I am assuming it is because these colors match 
+the exact colors that make up the Cottage grid. 
+But this is not what we are trying to do here. It shouldn't be the case.
+
+Think of a building's pattern as a block made up of multiple squares. 
+Where the squares are connected to make up a Building pattern.
+Which means on the grid, these squares need to be connected to make a block pattern.
+That's why some of the patterns are described as L - shape, or T - shape, etc.
+
+For example to select a Cottage Building, the colored squares need to be in
+connected positions, and not just randomly over the grid. 
+That is for the original orientation, it will look like a 2 X 2 matrix called 'C',
+C11 = has nothing, C12 = 'yellow', C21 = 'red' and C22 = 'blue'.
+
+I'm just using matrices to describe the positions, please do not assume that the 
+Cottage's pattern is a 2 X 2 grid.
+
+Another example will be for the Farm building. OOnce again, the colored squares
+need to be in connected positions and not spread over the grid.
+Once again, its original orientation will look like a 2 x 2 matrix we'll call 'F',
+F11 = 'yellow', F12 = 'yellow', F21 = 'brown' and F22 = 'brown'.
+
+Do you understand?
+
+
+
+a) Work on the fact that after selecting resources to make a pattern and then
+selecting a building card, if I select a random 
+resource (let's call it B31) on the grid and then select the cell where I 
+want to place the building icon, random resource B31 clears too. 
+The random resource should not clear, because it did not contribute to the 
+correct pattern. The only resources or cells that should clear are cells that 
+validated the pattern match.
+
+b) Check the patterns. Color selections should not validate a building icon. 
+Position, right colors and orientation / pattern should not just colors. 
+Once you are able to find the solution to this, you're good. You've done very well today.
+
+
+
+
