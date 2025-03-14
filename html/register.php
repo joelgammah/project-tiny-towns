@@ -2,7 +2,7 @@
 require 'db_connect.php'; // Include database connection
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $username = filter_input(INPUT_POST, 'username', FILTER_SANITIZE_STRING);
+    $username = filter_input(INPUT_POST, 'username', FILTER_SANITIZE_SPECIAL_CHARS);
     $password = $_POST['password'];
 
     if (!$username || !$password) {
@@ -27,7 +27,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->bind_param("ss", $username, $password_hash);
 
     if ($stmt->execute()) {
-        echo "Registration successful. <a href='login.php'>Login here</a>";
+        echo "Registration successful. <a href='login.html'>Login here</a>";
     } else {
         echo "Registration failed. Please try again.";
     }

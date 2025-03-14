@@ -400,6 +400,7 @@ document.addEventListener('DOMContentLoaded', function() {
         patternSquares.forEach(square => {
             square.addEventListener('click', function placeBuilding() {
                 const cell = square.closest('.cell');
+                cell.dataset.building = buildingName;
                 placeBuildingIcon(cell, buildingName);
                 cell.classList.add('locked');
     
@@ -487,4 +488,81 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     rebindGridCellListeners();
+
+
+    document.getElementById("finishGame").addEventListener("click", function() {
+        let boardArray = [];
+        const colorMap = {
+          "yellow": "Y",
+          "red": "R",
+          "blue": "B",
+          "brown": "N",  // "N" for browN
+          "gray": "G"    // "S" for Stone or Silver
+        };
+        const buildingMap = {
+          "Cottage": "C",
+          "Farm": "F",
+          "Chapel": "H",
+          "Tavern": "T",
+          "Well": "W",
+          "Theater": "E",
+          "Factory": "X",
+          "Catedral": "D"  // or "Cathedral" → "D"
+        };
+    
+        document.querySelectorAll(".cell").forEach(cell => {
+            // 1) Check if building is set in data attribute
+            if (cell.dataset.building) {
+                let bName = cell.dataset.building;
+                boardArray.push(buildingMap[bName] || "?");
+            } else {
+                // 2) No building, maybe there's a resource square
+                let resourceSquare = cell.querySelector(".square");
+                if (resourceSquare) {
+                    // read its color class
+                    let colorClass = [...resourceSquare.classList].find(c => colorMap[c]);
+                    if (colorClass) {
+                        boardArray.push(colorMap[colorClass]);
+                    } else {
+                        boardArray.push("-");
+                    }
+                } else {
+                    // 3) No resource either → empty
+                    boardArray.push("-");
+                }
+            }
+        });
+    
+        // Turn array of 16 characters into a single string
+        let boardState = boardArray.join("");
+    
+        let score = calculateScore();
+        fetch("finish_game.php", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ board: boardState, score: score })
+        })
+        .then(response => response.text())
+        .then(data => {
+            // If finish_game.php returned "FINISHED GAME":
+            if (data === "FINISHED GAME") {
+                // Redirect the browser to login.html
+                //window.location.href = "login.html";
+            } else {
+                // Otherwise, show whatever error the server returned
+                alert(data);
+            }
+        })
+        .catch(err => alert("Error: " + err));
+        
+    });
+    
+
+    function calculateScore() {
+        // Temporary scoring logic
+        return Math.floor(Math.random() * 100);
+    }
+    
 });
+
+
