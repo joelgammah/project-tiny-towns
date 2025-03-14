@@ -1,0 +1,19 @@
+services:
+  web:
+    build: .
+    ports:
+      - "80:80"   
+    depends_on:
+      - db   
+    volumes:
+      - ./html:/var/www/html  
+  db:
+    image: mariadb   
+    environment:
+      MARIADB_ROOT_PASSWORD: root   
+      MARIADB_DATABASE: tinytowns  
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./schema.sql:/docker-entrypoint-initdb.d/schema.sql
+      - ./mariadb_data:/var/lib/mysql  
